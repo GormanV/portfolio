@@ -172,8 +172,10 @@ void main(){
   vec3 upVec=abs(vNormal.y)<0.99?vec3(0.0,1.0,0.0):vec3(1.0,0.0,0.0);
   vec3 T=normalize(cross(upVec,vNormal));
   vec3 B=normalize(cross(vNormal,T));
+  // Fade bump near poles so the tangent-frame seam ring at abs(vNormal.y)=0.99 is invisible
+  float poleFade=1.0-smoothstep(0.85,0.99,abs(vNormal.y));
   // Perturb normal by height gradient; scale 7.0 gives subtle-but-visible relief
-  vec3 bumpNorm=normalize(vNormal+(T*(n1-bR)+B*(n1-bU))*7.0);
+  vec3 bumpNorm=normalize(vNormal+(T*(n1-bR)+B*(n1-bU))*7.0*poleFade);
 
   // ── Ridged turbulence — cliffs, escarpments, canyon rims ──
   float ridges=ridgedFbm(vUv*5.5+vec2(1.7,3.2));
