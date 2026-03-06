@@ -31,6 +31,17 @@ float fbm(vec2 p){
   return v;
 }
 
+// Ridged turbulence — creates sharp cliff and canyon lines
+float ridgedFbm(vec2 p){
+  float v=0.0,a=0.5;
+  for(int i=0;i<5;i++){
+    float n=1.0-abs(noise(p)*2.0-1.0);
+    v+=a*n*n;
+    p*=2.1;a*=0.45;
+  }
+  return v;
+}
+
 vec2 lc(vec2 uv){
   float du=uv.x-featureU;
   if(du>0.5)du-=1.0;
@@ -113,12 +124,44 @@ void main(){
   float n2=fbm(vUv*8.0+vec2(time*0.005,0.2));
   float n3=fbm(vUv*16.0+vec2(0.5,time*0.003));
   float terrain=n1*0.55+n2*0.3+n3*0.15;
+
+  // ── Bump normal from finite differences on the primary terrain layer ──
+  // Sampling offsets in UV space; multiply by terrain frequency (4.0) implicitly
+  float eps=0.003;
+  float bR=fbm((vUv+vec2(eps,0.0))*4.0+vec2(0.3,0.1));
+  float bU=fbm((vUv+vec2(0.0,eps))*4.0+vec2(0.3,0.1));
+  // Build orthonormal tangent frame from the sphere geometric normal
+  vec3 upVec=abs(vNormal.y)<0.99?vec3(0.0,1.0,0.0):vec3(1.0,0.0,0.0);
+  vec3 T=normalize(cross(upVec,vNormal));
+  vec3 B=normalize(cross(vNormal,T));
+  // Perturb normal by height gradient; scale 7.0 gives subtle-but-visible relief
+  vec3 bumpNorm=normalize(vNormal+(T*(n1-bR)+B*(n1-bU))*7.0);
+
+  // ── Ridged turbulence — cliffs, escarpments, canyon rims ──
+  float ridges=ridgedFbm(vUv*5.5+vec2(1.7,3.2));
+  // Second layer of smaller ridges for fine eroded texture
+  float ridgesSmall=ridgedFbm(vUv*11.0+vec2(4.1,0.9))*0.5;
+
+  // ── Fine surface grain ──
+  float grain=noise(vUv*72.0+vec2(0.4,0.8))*2.0-1.0;
+
+  // ── Base colour (palette unchanged) ──
   vec3 col1=vec3(0.55,0.22,0.05);vec3 col2=vec3(0.78,0.42,0.10);vec3 col3=vec3(0.88,0.65,0.25);vec3 col4=vec3(0.42,0.15,0.03);
   vec3 baseCol=mix(col1,col2,smoothstep(0.2,0.5,terrain));
   baseCol=mix(baseCol,col3,smoothstep(0.5,0.75,terrain));
   baseCol=mix(baseCol,col4,smoothstep(0.75,1.0,terrain));
   baseCol=mix(baseCol,vec3(0.75,0.65,0.55),smoothstep(0.78,0.95,abs(vUv.y-0.5)*2.0)*0.5);
   baseCol+=vec3(0.0,0.08,0.12)*smoothstep(0.35,0.45,n1)*(1.0-smoothstep(0.45,0.55,n1))*fbm(vUv*20.0)*1.5;
+
+  // ── Surface detail overlays ──
+  // Ridge crests: warm bright highlight at the top of each ridge
+  baseCol+=vec3(0.12,0.07,0.02)*ridges*0.28;
+  // Smaller ridges: tighten detail and add slight darkening in troughs
+  baseCol-=vec3(0.06,0.03,0.01)*(1.0-ridgesSmall)*0.12;
+  // Fine grain: subtle albedo variation across the whole surface
+  baseCol+=vec3(0.04,0.02,0.005)*grain*0.55;
+
+  // ── Region feature overlay (unchanged logic) ──
   vec2 c=lc(vUv);
   float feat=featureHome(c)*(1.0-smoothstep(0.49,0.51,abs(pageId-0.0)))
             +featureAbout(c)*(1.0-smoothstep(0.49,0.51,abs(pageId-1.0)))
@@ -128,8 +171,10 @@ void main(){
             +featureContact(c)*(1.0-smoothstep(0.49,0.51,abs(pageId-5.0)));
   vec3 featCol=mix(baseCol*0.35,baseCol*1.9+vec3(0.10,0.05,0.0),clamp(feat*0.5+0.5,0.0,1.0));
   baseCol=mix(baseCol,featCol,clamp(abs(feat)*featureMix,0.0,0.88));
-  float diff=max(dot(vNormal,sunDir),0.0);
-  baseCol*=(0.12+diff*0.88)*(0.3+0.7*smoothstep(-0.05,0.15,dot(vNormal,sunDir)));
+
+  // ── Lighting — use bump normal so terrain relief casts directional shading ──
+  float diff=max(dot(bumpNorm,sunDir),0.0);
+  baseCol*=(0.12+diff*0.88)*(0.3+0.7*smoothstep(-0.05,0.15,dot(bumpNorm,sunDir)));
   gl_FragColor=vec4(baseCol,1.0);
 }
 `
