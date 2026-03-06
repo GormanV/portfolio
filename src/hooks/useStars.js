@@ -14,7 +14,7 @@ export function useStars(canvasRef) {
       canvas.height = window.innerHeight
       stars = Array.from({ length: 400 }, () => ({
         x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height * 0.67,
+        y: Math.random() * canvas.height,
         r: Math.random() * 1.5 + 0.2,
         alpha: Math.random() * 0.8 + 0.2,
         twinkle: Math.random() * Math.PI * 2,
