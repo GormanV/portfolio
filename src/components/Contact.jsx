@@ -3,6 +3,7 @@ import { useState } from 'react'
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -14,11 +15,15 @@ export default function Contact() {
       setStatus({ type: 'error', text: '[ All fields required ]' })
       return
     }
+    setSubmitting(true)
     try {
-      const res = await fetch('http://localhost:8080/api/contact', {
+      const res = await fetch('/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'contact',
+          ...form,
+        }).toString(),
       })
       if (res.ok) {
         setStatus({ type: 'success', text: '[ Message transmitted successfully ]' })
@@ -28,6 +33,8 @@ export default function Contact() {
       }
     } catch {
       setStatus({ type: 'error', text: '[ Transmission failed — contact via LinkedIn ]' })
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -36,8 +43,16 @@ export default function Contact() {
       <div className="panel-tag">Shield Wall · Northern Passage</div>
       <h1 className="panel-title">Open to Opportunities</h1>
       <p>
-        I'm actively seeking my next role in full-stack engineering.
+        I'm actively seeking my next role in full-stack engineering — supply chain, logistics,
+        fintech, or anywhere systems need to be <em>really</em> thought through.
       </p>
+
+      {/* Hidden form so Netlify detects it at build time */}
+      <form name="contact" data-netlify="true" hidden>
+        <input type="text" name="name" />
+        <input type="email" name="email" />
+        <textarea name="message" />
+      </form>
 
       <div className="contact-form">
         <div className="form-group">
@@ -48,6 +63,7 @@ export default function Contact() {
             value={form.name}
             onChange={handleChange}
             placeholder="Your name"
+            disabled={submitting}
           />
         </div>
         <div className="form-group">
@@ -58,6 +74,7 @@ export default function Contact() {
             value={form.email}
             onChange={handleChange}
             placeholder="your@email.com"
+            disabled={submitting}
           />
         </div>
         <div className="form-group">
@@ -67,10 +84,11 @@ export default function Contact() {
             value={form.message}
             onChange={handleChange}
             placeholder="Tell me about the opportunity..."
+            disabled={submitting}
           />
         </div>
-        <button className="btn-transmit" onClick={handleSubmit}>
-          ⟶ Transmit Message
+        <button className="btn-transmit" onClick={handleSubmit} disabled={submitting}>
+          {submitting ? '⟶ Transmitting...' : '⟶ Transmit Message'}
         </button>
         {status && <div className={`msg-status ${status.type}`}>{status.text}</div>}
       </div>
@@ -80,14 +98,14 @@ export default function Contact() {
         <div
           className="skill-tag"
           style={{ cursor: 'pointer' }}
-          onClick={() => window.open('https://github.com/tomowen93', '_blank')}
+          onClick={() => window.open('https://github.com/GormanV', '_blank')}
         >
           GitHub ↗
         </div>
         <div
           className="skill-tag"
           style={{ cursor: 'pointer' }}
-          onClick={() => window.open('https://www.linkedin.com/in/tom-owen/', '_blank')}
+          onClick={() => window.open('https://linkedin.com', '_blank')}
         >
           LinkedIn ↗
         </div>
