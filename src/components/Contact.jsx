@@ -1,5 +1,30 @@
 import { useState } from 'react'
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+const SQL_RE = /(\b(select|insert|update|delete|drop|union|exec|execute|alter|create|truncate|declare|cast|convert)\b|--|\/\*|\*\/|xp_)/i
+
+// Encoded profanity blocklist — base64 to avoid plaintext slurs in source
+const SLUR_RES = [
+  'bmlnZ2Vy', 'bmlnZ2E=', 'Y2hpbms=', 'a2lrZQ==', 'c3BpYw==', 'd2V0YmFjaw==',
+  'ZmFnZ290', 'dHJhbm55', 'cmV0YXJk', 'Z29vaw==', 'dG93ZWxoZWFk', 'cmFnaGVhZA==',
+  'Y29vbg==', 'YmVhbmVy', 'cGFraQ==', 'emlwcGVyaGVhZA==', 'aHltaWU=', 'bmlw',
+  'd29w', 'ZGFnbw==', 'cG9sYWNr',
+].map(b => new RegExp(`\\b${atob(b)}\\b`, 'i'))
+
+function validate({ name, email, message }) {
+  if (!name.trim() || !email.trim() || !message.trim())
+    return '[ All fields required ]'
+  if (!EMAIL_RE.test(email.trim()))
+    return '[ Invalid email address ]'
+  const combined = `${name} ${email} ${message}`
+  if (SQL_RE.test(combined))
+    return '[ Invalid input detected ]'
+  if (SLUR_RES.some(re => re.test(combined)))
+    return '[ Message contains prohibited content ]'
+  return null
+}
+
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState(null)
@@ -11,8 +36,9 @@ export default function Contact() {
   }
 
   const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.message) {
-      setStatus({ type: 'error', text: '[ All fields required ]' })
+    const error = validate(form)
+    if (error) {
+      setStatus({ type: 'error', text: error })
       return
     }
     setSubmitting(true)
