@@ -104,8 +104,8 @@ export default function App() {
             <h1 className="hero-name">Tom<br /><span className="accent">Owen</span></h1>
             <div className="hero-title">Full Stack Engineer</div>
             <p className="hero-desc">
-              Astrophysicist turned engineer. Nearly 3 years building Spring Boot microservices
-              and React UIs at Ocado Technology — systems supporting 70m+ orders annually.
+              Career changer with nearly 3 years building Spring Boot microservices
+              and React UIs at Ocado Technology.
               Now looking for my next role.
             </p>
             <div className="hero-ctas">

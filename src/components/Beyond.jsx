@@ -12,7 +12,7 @@ const HOBBIES = [
   {
     icon: '📖',
     name: 'Dune — Frank Herbert',
-    desc: "I've read the original series multiple times. Herbert built an incredibly detailed universe — the ecology, politics, religion and economics all feel genuinely interconnected. The later books get strange but I enjoy them for it. Still haven't found anything quite like it.",
+    desc: "In my opinion, one of the greatest sci-fi series of all time. Herbert built an incredibly detailed universe — the ecology, politics, religion and economics all feel genuinely interconnected. The later books get strange but I enjoy them for it. Still haven't found anything quite like it.",
   },
   {
     icon: '⚔️',
