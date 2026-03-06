@@ -488,8 +488,9 @@ h2.section-title {
     left: 0; right: 0;
   }
 
-  /* Layout */
-  .panel-wrapper { padding: 5.5rem 0.75rem 1.5rem; }
+  /* Layout — leave room at bottom for the planet label canvas */
+  .content-area { bottom: 20vh; }
+  .panel-wrapper { bottom: 20vh; padding: 5.5rem 0.75rem 1.5rem; }
   .hero-panel { padding: 0 1.25rem; }
 
   /* Content panel — wider, less internal padding */

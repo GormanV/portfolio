@@ -18,10 +18,16 @@ export function useLabel(canvasRef, region) {
     const ctx = canvas.getContext('2d')
     let animId
     let last = performance.now()
+    let cssW = 0, cssH = 0
 
     const resize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = Math.floor(window.innerHeight * 0.20)
+      const dpr = window.devicePixelRatio || 1
+      cssW = window.innerWidth
+      cssH = Math.floor(window.innerHeight * 0.20)
+      canvas.width = Math.round(cssW * dpr)
+      canvas.height = Math.round(cssH * dpr)
+      // Scale context so all draw coords stay in CSS pixels
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
     resize()
     window.addEventListener('resize', resize)
@@ -49,16 +55,16 @@ export function useLabel(canvasRef, region) {
 
       const alpha = alphaRef.current
       const r = displayRegionRef.current
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, cssW, cssH)
       if (alpha <= 0 || !r) return
 
-      const cx = canvas.width / 2
-      const cy = canvas.height * 0.55
+      const cx = cssW / 2
+      const cy = cssH * 0.55
       const hex = r.color
       const rr = parseInt(hex.slice(1, 3), 16)
       const rg = parseInt(hex.slice(3, 5), 16)
       const rb = parseInt(hex.slice(5, 7), 16)
-      const fontSize = Math.max(13, Math.round(canvas.width * 0.019))
+      const fontSize = Math.max(18, Math.round(cssW * 0.019))
 
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
@@ -72,7 +78,7 @@ export function useLabel(canvasRef, region) {
       ctx.shadowBlur = 0
       ctx.shadowOffsetY = 0
 
-      const lw = Math.min(180, canvas.width * 0.12)
+      const lw = Math.min(180, cssW * 0.12)
       const ly = cy + fontSize * 0.85
       const grad = ctx.createLinearGradient(cx - lw, ly, cx + lw, ly)
       grad.addColorStop(0, `rgba(${rr},${rg},${rb},0)`)
