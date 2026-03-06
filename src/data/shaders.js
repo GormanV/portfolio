@@ -188,7 +188,6 @@ void main(){
   vec3 baseCol=mix(col1,col2,smoothstep(0.2,0.5,terrain));
   baseCol=mix(baseCol,col3,smoothstep(0.5,0.75,terrain));
   baseCol=mix(baseCol,col4,smoothstep(0.75,1.0,terrain));
-  baseCol=mix(baseCol,vec3(0.75,0.65,0.55),smoothstep(0.78,0.95,abs(vUv.y-0.5)*2.0)*0.5);
   baseCol+=vec3(0.0,0.08,0.12)*smoothstep(0.35,0.45,n1)*(1.0-smoothstep(0.45,0.55,n1))*fbm(vUv*20.0)*1.5;
 
   // ── Surface detail overlays ──
