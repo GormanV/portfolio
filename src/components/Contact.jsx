@@ -43,8 +43,7 @@ export default function Contact() {
       <div className="panel-tag">Shield Wall · Northern Passage</div>
       <h1 className="panel-title">Open to Opportunities</h1>
       <p>
-        I'm actively seeking my next role in full-stack engineering — supply chain, logistics,
-        fintech, or anywhere systems need to be <em>really</em> thought through.
+        I'm actively seeking my next role in full-stack engineering, please feel free to contact me if you know of any suitable roles!
       </p>
 
       {/* Hidden form so Netlify detects it at build time */}
