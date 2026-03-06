@@ -80,14 +80,14 @@ export default function Contact() {
         <div
           className="skill-tag"
           style={{ cursor: 'pointer' }}
-          onClick={() => window.open('https://github.com/GormanV', '_blank')}
+          onClick={() => window.open('https://github.com/tomowen93', '_blank')}
         >
           GitHub ↗
         </div>
         <div
           className="skill-tag"
           style={{ cursor: 'pointer' }}
-          onClick={() => window.open('https://linkedin.com', '_blank')}
+          onClick={() => window.open('https://www.linkedin.com/in/tom-owen/', '_blank')}
         >
           LinkedIn ↗
         </div>
