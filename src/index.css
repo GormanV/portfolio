@@ -155,7 +155,7 @@ nav {
 /* ── HERO ── */
 .content-area {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 20vh;
+  top: 0; left: 0; right: 0; bottom: 0;
   z-index: 80;
   display: flex;
   align-items: center;
@@ -251,7 +251,7 @@ nav {
 /* ── CONTENT PANEL ── */
 .panel-wrapper {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 20vh;
+  top: 0; left: 0; right: 0; bottom: 0;
   padding: 5rem 3rem 2rem;
   z-index: 80;
 }
