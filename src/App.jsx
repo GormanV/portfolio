@@ -16,6 +16,7 @@ export default function App() {
   const [transitioning, setTransitioning] = useState(false)
   const [panelVisible, setPanelVisible] = useState(false)
   const [heroVisible, setHeroVisible] = useState(false)
+  const [infoOpen, setInfoOpen] = useState(false)
 
   const starCanvasRef = useRef(null)
   const planetCanvasRef = useRef(null)
@@ -124,6 +125,28 @@ export default function App() {
               <PageComponent />
             </div>
           </div>
+        </div>
+      )}
+
+      {/* About this page */}
+      <button className="info-btn" onClick={() => setInfoOpen(o => !o)}>
+        About this page
+      </button>
+      {infoOpen && (
+        <div className="info-popup">
+          <button className="info-popup-close" onClick={() => setInfoOpen(false)}>✕</button>
+          <p className="info-popup-heading">AI-Assisted Project</p>
+          <p>
+            This portfolio was built using{' '}
+            <strong>Claude Code</strong> — Anthropic's AI-powered CLI tool — with{' '}
+            <strong>Claude Sonnet</strong> as the coding assistant.
+          </p>
+          <p>
+            The design concept, content, and ideas are Tom's own. The implementation
+            was pair-programmed with Claude: writing React components, GLSL planet
+            shaders, Three.js animations, and CSS from scratch through conversation.
+          </p>
+          <p>Built for learning purposes. Not intended for commercial use.</p>
         </div>
       )}
     </>
