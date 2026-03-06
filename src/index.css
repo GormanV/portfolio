@@ -458,6 +458,67 @@ h2.section-title {
 .msg-status.success { color: var(--hud-cyan); border: 1px solid var(--glass-border); }
 .msg-status.error { color: var(--spice-orange); border: 1px solid rgba(200, 105, 42, 0.3); }
 
+/* ── INFO BUTTON & POPUP ── */
+.info-btn {
+  position: fixed;
+  bottom: 1rem;
+  right: 1.5rem;
+  z-index: 200;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  transition: color 0.2s;
+}
+.info-btn:hover { color: var(--hud-cyan); }
+
+.info-popup {
+  position: fixed;
+  bottom: 3rem;
+  right: 1.5rem;
+  z-index: 200;
+  width: min(300px, calc(100vw - 3rem));
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  padding: 1.25rem 1.25rem 1rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 0 40px rgba(74, 240, 232, 0.06);
+}
+.info-popup-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  transition: color 0.2s;
+}
+.info-popup-close:hover { color: var(--hud-cyan); }
+.info-popup-heading {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: var(--spice-gold);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+.info-popup p {
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: var(--text-dim);
+  margin-bottom: 0.6rem;
+}
+.info-popup p:last-child { margin-bottom: 0; }
+.info-popup strong { color: var(--text-primary); font-weight: 600; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   /* Nav: two-row layout so links don't overflow */
