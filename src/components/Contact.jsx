@@ -2,7 +2,9 @@ import { useState } from 'react'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-const SQL_RE = /(\b(select|insert|update|delete|drop|union|exec|execute|alter|create|truncate|declare|cast|convert)\b|--|\/\*|\*\/|xp_)/i
+// Targets unambiguous injection patterns only; avoids blocking everyday words
+// like "drop", "select", "create", "update" used in normal sentences.
+const SQL_RE = /(--|\/\*|\*\/|xp_|\bunion\s+select\b|;\s*(drop|select|insert|update|delete|truncate)\b|\b(exec|execute)\s*\(|\bsleep\s*\(\d|\bdrop\s+table\b)/i
 
 // Encoded profanity blocklist — base64 to avoid plaintext slurs in source
 const SLUR_RES = [
@@ -130,7 +132,7 @@ export default function Contact() {
         <div
           className="skill-tag"
           style={{ cursor: 'pointer' }}
-          onClick={() => window.open('https://linkedin.com', '_blank')}
+          onClick={() => window.open('https://www.linkedin.com/in/tom-owen/', '_blank')}
         >
           LinkedIn ↗
         </div>

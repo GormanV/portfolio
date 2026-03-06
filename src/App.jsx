@@ -11,6 +11,11 @@ import Contact from './components/Contact'
 
 const PAGE_COMPONENTS = { about: About, skills: Skills, experience: Experience, beyond: Beyond, contact: Contact }
 
+// Navigation timing constants (ms)
+const HERO_FADE_DELAY = 300    // delay before hero fades in on first load
+const NAV_TRANSITION_MS = 450  // planet rotation + page swap duration
+const PANEL_REVEAL_DELAY = 50  // brief pause after swap before panel slides in
+
 export default function App() {
   const [page, setPage] = useState('home')
   const [transitioning, setTransitioning] = useState(false)
@@ -28,7 +33,7 @@ export default function App() {
 
   // Hero fade-in on mount
   useEffect(() => {
-    const t = setTimeout(() => setHeroVisible(true), 300)
+    const t = setTimeout(() => setHeroVisible(true), HERO_FADE_DELAY)
     return () => clearTimeout(t)
   }, [])
 
@@ -40,8 +45,8 @@ export default function App() {
     setTimeout(() => {
       setPage(newPage)
       setTransitioning(false)
-      if (newPage !== 'home') setTimeout(() => setPanelVisible(true), 50)
-    }, 450)
+      if (newPage !== 'home') setTimeout(() => setPanelVisible(true), PANEL_REVEAL_DELAY)
+    }, NAV_TRANSITION_MS)
   }, [page, transitioning, navigatePlanet])
 
   // Keyboard navigation
