@@ -18,14 +18,14 @@ export function useStars(canvasRef) {
         r: Math.random() * 1.5 + 0.2,
         alpha: Math.random() * 0.8 + 0.2,
         twinkle: Math.random() * Math.PI * 2,
-        speed: 0.3 + Math.random() * 0.7,
+        speed: 0.3 + Math.random() * 0.5,
       }))
     }
 
     const draw = (t) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       stars.forEach(s => {
-        const a = s.alpha * (0.5 + 0.5 * Math.sin(s.twinkle + t * s.speed))
+        const a = s.alpha * (0.75 + 0.25 * Math.sin(s.twinkle + (t / 1000) * s.speed))
         ctx.beginPath()
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
         ctx.fillStyle = `rgba(220,230,255,${a})`

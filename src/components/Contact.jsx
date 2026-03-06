@@ -1,5 +1,28 @@
 import { useState } from 'react'
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+const SQL_RE = /(\b(select|insert|update|delete|drop|union|exec|execute|alter|create|truncate|declare|cast|convert)\b|--|\/\*|\*\/|xp_)/i
+
+const SLUR_RES = [
+  'nigger', 'nigga', 'chink', 'kike', 'spic', 'wetback', 'faggot', 'tranny',
+  'retard', 'gook', 'towelhead', 'raghead', 'coon', 'beaner', 'paki',
+  'zipperhead', 'hymie', 'nip', 'wop', 'dago', 'polack',
+].map(s => new RegExp(`\\b${s}\\b`, 'i'))
+
+function validate({ name, email, message }) {
+  if (!name.trim() || !email.trim() || !message.trim())
+    return '[ All fields required ]'
+  if (!EMAIL_RE.test(email.trim()))
+    return '[ Invalid email address ]'
+  const combined = `${name} ${email} ${message}`
+  if (SQL_RE.test(combined))
+    return '[ Invalid input detected ]'
+  if (SLUR_RES.some(re => re.test(combined)))
+    return '[ Message contains prohibited content ]'
+  return null
+}
+
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState(null)
@@ -11,8 +34,9 @@ export default function Contact() {
   }
 
   const handleSubmit = async () => {
-    if (!form.name || !form.email || !form.message) {
-      setStatus({ type: 'error', text: '[ All fields required ]' })
+    const error = validate(form)
+    if (error) {
+      setStatus({ type: 'error', text: error })
       return
     }
     setSubmitting(true)
