@@ -4,11 +4,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 const SQL_RE = /(\b(select|insert|update|delete|drop|union|exec|execute|alter|create|truncate|declare|cast|convert)\b|--|\/\*|\*\/|xp_)/i
 
+// Encoded profanity blocklist — base64 to avoid plaintext slurs in source
 const SLUR_RES = [
-  'nigger', 'nigga', 'chink', 'kike', 'spic', 'wetback', 'faggot', 'tranny',
-  'retard', 'gook', 'towelhead', 'raghead', 'coon', 'beaner', 'paki',
-  'zipperhead', 'hymie', 'nip', 'wop', 'dago', 'polack',
-].map(s => new RegExp(`\\b${s}\\b`, 'i'))
+  'bmlnZ2Vy', 'bmlnZ2E=', 'Y2hpbms=', 'a2lrZQ==', 'c3BpYw==', 'd2V0YmFjaw==',
+  'ZmFnZ290', 'dHJhbm55', 'cmV0YXJk', 'Z29vaw==', 'dG93ZWxoZWFk', 'cmFnaGVhZA==',
+  'Y29vbg==', 'YmVhbmVy', 'cGFraQ==', 'emlwcGVyaGVhZA==', 'aHltaWU=', 'bmlw',
+  'd29w', 'ZGFnbw==', 'cG9sYWNr',
+].map(b => new RegExp(`\\b${atob(b)}\\b`, 'i'))
 
 function validate({ name, email, message }) {
   if (!name.trim() || !email.trim() || !message.trim())
