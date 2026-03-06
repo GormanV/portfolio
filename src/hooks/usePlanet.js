@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import * as THREE from 'three'
 import { PAGES, REGIONS } from '../data/regions'
-import { VERTEX_SHADER, FRAGMENT_SHADER } from '../data/shaders'
+import { VERTEX_SHADER, FRAGMENT_SHADER, SPHERE_RIM_VERTEX_SHADER, ATMOSPHERE_FRAGMENT_SHADER, HAZE_FRAGMENT_SHADER } from '../data/shaders'
 
 export function usePlanet(planetCanvasRef) {
   const threeRef = useRef({})
@@ -49,8 +49,8 @@ export function usePlanet(planetCanvasRef) {
     const atmGeo = new THREE.SphereGeometry(2.35, 64, 64)
     const atmMat = new THREE.ShaderMaterial({
       uniforms: { sunDir: { value: new THREE.Vector3(-1, 0.4, 1).normalize() } },
-      vertexShader: `varying vec3 vNormal;varying vec3 vPos;void main(){vNormal=normalize(normalMatrix*normal);vPos=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
-      fragmentShader: `uniform vec3 sunDir;varying vec3 vNormal;varying vec3 vPos;void main(){vec3 viewDir=normalize(cameraPosition-vPos);float rim=1.0-max(dot(viewDir,vNormal),0.0);rim=pow(rim,3.5);float sunSide=dot(vNormal,sunDir)*0.5+0.5;vec3 atmColor=mix(vec3(0.55,0.28,0.08),vec3(0.15,0.35,0.65),1.0-sunSide);gl_FragColor=vec4(atmColor,rim*0.65);}`,
+      vertexShader: SPHERE_RIM_VERTEX_SHADER,
+      fragmentShader: ATMOSPHERE_FRAGMENT_SHADER,
       transparent: true,
       depthWrite: false,
       side: THREE.BackSide,
@@ -62,8 +62,8 @@ export function usePlanet(planetCanvasRef) {
     const hazeGeo = new THREE.SphereGeometry(2.25, 64, 64)
     const hazeMat = new THREE.ShaderMaterial({
       uniforms: { sunDir: { value: new THREE.Vector3(-1, 0.4, 1).normalize() } },
-      vertexShader: `varying vec3 vNormal;varying vec3 vPos;void main(){vNormal=normalize(normalMatrix*normal);vPos=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
-      fragmentShader: `uniform vec3 sunDir;varying vec3 vNormal;varying vec3 vPos;void main(){vec3 viewDir=normalize(cameraPosition-vPos);float rim=1.0-max(dot(viewDir,vNormal),0.0);rim=pow(rim,6.0);float sunny=smoothstep(-0.2,0.5,dot(vNormal,sunDir));gl_FragColor=vec4(vec3(0.9,0.55,0.2),rim*sunny*0.35);}`,
+      vertexShader: SPHERE_RIM_VERTEX_SHADER,
+      fragmentShader: HAZE_FRAGMENT_SHADER,
       transparent: true,
       depthWrite: false,
       side: THREE.FrontSide,

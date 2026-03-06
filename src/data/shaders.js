@@ -1,3 +1,41 @@
+// Shared vertex shader for atmosphere and haze layers
+export const SPHERE_RIM_VERTEX_SHADER = `
+varying vec3 vNormal;
+varying vec3 vPos;
+void main() {
+  vNormal = normalize(normalMatrix * normal);
+  vPos = (modelMatrix * vec4(position, 1.0)).xyz;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`
+
+// Atmosphere glow: warm-to-cool colour based on sun side, rim-lit
+export const ATMOSPHERE_FRAGMENT_SHADER = `
+uniform vec3 sunDir;
+varying vec3 vNormal;
+varying vec3 vPos;
+void main() {
+  vec3 viewDir = normalize(cameraPosition - vPos);
+  float rim = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 3.5);
+  float sunSide = dot(vNormal, sunDir) * 0.5 + 0.5;
+  vec3 atmColor = mix(vec3(0.55, 0.28, 0.08), vec3(0.15, 0.35, 0.65), 1.0 - sunSide);
+  gl_FragColor = vec4(atmColor, rim * 0.65);
+}
+`
+
+// Dust haze: warm orange rim glow on the sun-facing limb
+export const HAZE_FRAGMENT_SHADER = `
+uniform vec3 sunDir;
+varying vec3 vNormal;
+varying vec3 vPos;
+void main() {
+  vec3 viewDir = normalize(cameraPosition - vPos);
+  float rim = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 6.0);
+  float sunny = smoothstep(-0.2, 0.5, dot(vNormal, sunDir));
+  gl_FragColor = vec4(vec3(0.9, 0.55, 0.2), rim * sunny * 0.35);
+}
+`
+
 export const VERTEX_SHADER = `
 varying vec2 vUv;
 varying vec3 vNormal;
