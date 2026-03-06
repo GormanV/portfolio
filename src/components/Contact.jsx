@@ -132,7 +132,7 @@ export default function Contact() {
         <div
           className="skill-tag"
           style={{ cursor: 'pointer' }}
-          onClick={() => window.open('https://linkedin.com', '_blank')}
+          onClick={() => window.open('https://www.linkedin.com/in/tom-owen/', '_blank')}
         >
           LinkedIn ↗
         </div>
