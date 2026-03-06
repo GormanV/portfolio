@@ -93,11 +93,13 @@ export function usePlanet(planetCanvasRef) {
 
     const clock = new THREE.Clock()
     let animId
+    let accumTime = 0
 
     const animate = () => {
       animId = requestAnimationFrame(animate)
-      const dt = clock.getDelta()
-      const elapsed = clock.getElapsedTime()
+      // Cap dt so tabbing away and back doesn't cause a huge time jump / spin
+      const dt = Math.min(clock.getDelta(), 0.05)
+      accumTime += dt
 
       const { x, y, tx, ty } = rotRef.current
       const speed = 1.8
@@ -109,11 +111,12 @@ export function usePlanet(planetCanvasRef) {
       rotRef.current = { x: newX, y: newY, tx, ty }
 
       planetGroup.rotation.x = newX
-      planetGroup.rotation.y = newY + elapsed * 0.012
+      // Slow idle auto-rotation via accumTime (pauses naturally when tab is hidden)
+      planetGroup.rotation.y = newY + accumTime * 0.012
 
       const fm = featureMixRef.current
       fm.cur += (fm.target - fm.cur) * Math.min(dt * 4, 1)
-      mat.uniforms.time.value = elapsed
+      mat.uniforms.time.value = accumTime
       mat.uniforms.featureMix.value = fm.cur
 
       renderer.render(scene, camera)
